@@ -3,6 +3,8 @@ thespread
 
 This is the repository for posts on [thespread.us](http://thespread.us). In order to reproduce the posts on the spread, you will need to purchase play-by-play data from [Armchair Analysis](http://armchairanalysis.com) for $25. 
 
+*DISCLAIMER*: I do not receieve any compensation if you buy the play-by-play data. It's just the best, cheapeast, and most comprehensive play-by-play-data available.
+
 ## Dependencies
 
 To use the files in this repo, you should be on a UNIX-based system (Mac OS X should work, though these files have only been tested in Linux Mint 15 and Ubuntu 13.10). You will also need the following dependencies installed:
