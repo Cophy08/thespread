@@ -49,17 +49,14 @@ else
 fi
 
 echo "Your password is required to check if the database already exists."
+echo "Creating database $2."
+echo "WARNING: This requires superuser access. You may need to provide your password several times."
+echo "Trying to drop existing play-by-play data, may produce an error."
+dropdb $2
+sudo -u postgres createdb -O $USER $2
+psql -f ../../training_data.sql pbp
 
-if [ $(psql -l | grep $2 | wc -l) = "0" ]; then
-	echo "Creating database $2."
-	echo "WARNING: This requires superuser access. You may need to provide your password several times."
-	sudo -u postgres createdb -O $USER $2
-	psql -f ../../training_data.sql pbp
-else
-	echo "Database with name $2 already found."
-fi
-
-echo "Adding 2013 play by play data from Advanced NFL Stats."
+echo "Adding 2013 play by play data from Advanced NFL Stats. Password required."
 cd ../..
 pwd
 
@@ -72,7 +69,7 @@ else
 	exit 1
 fi
 
-echo "Adding 2013 lines and team name maps."
+echo "Adding 2013 lines and team name maps. Password required."
 
 if [ -f team_name_map.csv ] && [ -f nfl2013lines.csv ]; then
 		echo "Creating tables for team name map and 2013 lines. You may need to provide your password."

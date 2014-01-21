@@ -48,10 +48,7 @@ delete from win_prob_test_data
 
 delete from win_prob_test_data
 	where season = 2012;
-
-update win_prob_test_data
-		set sec = case when sec ~ '\\d+' then sec::integer else 0 end;
-
+	
 alter table win_prob_test_data
 	alter sec type int using (sec::integer);
 

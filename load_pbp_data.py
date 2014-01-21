@@ -15,8 +15,15 @@ import re
 # and takes the format
 # {'user' : username, 'password': password}
 
-with open('creds.pkl', 'rb') as pkl_file:
-	creds = cPickle.load(pkl_file)
+try:
+	with open('../creds.pkl', 'rb') as pkl_file:
+		creds = cPickle.load(pkl_file)
+except:
+	creds = dict()
+	creds['user'] = raw_input('Enter Postgres username: ')
+	creds['password'] = raw_input('Enter Postgres password: ')
+	with open('../creds.pkl', 'wb') as f:
+		cPickle.dump(creds, f)
 
 conn = psycopg2.connect(database = 'pbp', user = creds['user'], password = creds['password'])
 sql = "select wpd.*, \

@@ -23,10 +23,10 @@ yfog int default null
 \copy win_prob_data from flat_file_reduced.csv with csv header delimiter as ',';
 
 update win_prob_data
-		set min = case when min ~ ':' then 0 else min::integer end;
+    set min = case when min ~ ':' then 0 else min::integer end;
 
 alter table win_prob_data
-	alter min type int using (min::integer);
+    alter min type int using (min::integer);
 
 drop table if exists games;
 
@@ -57,13 +57,13 @@ add column sec_adj int,
 add column winner char(3);
 
 update win_prob_data
-	set sec_adj = 
-	case when qtr = 1 then (min + 45) * 60 + sec
-		 when qtr = 2 then (min + 30) * 60 + sec
-		 when qtr = 3 then (min + 15) * 60 + sec
-		 when qtr = 4 then (min * 60) + sec 
-		 end
-		 ;
+    set sec_adj = 
+    case when qtr = 1 then (min + 45) * 60 + sec
+         when qtr = 2 then (min + 30) * 60 + sec
+         when qtr = 3 then (min + 15) * 60 + sec
+         when qtr = 4 then (min * 60) + sec 
+         end
+         ;
 
 drop table if exists winners;
 
@@ -75,9 +75,9 @@ winner char(3)
 insert into winners
 select gid,
 case 
-when v > h then v 
-when h > v then h 
-when v = h then 'TIE' 
+when ptsv > ptsh then v 
+when ptsh > ptsv then h 
+when ptsv = ptsh then 'TIE' 
 end as winner
 from games g;
 
@@ -86,5 +86,6 @@ set winner = w.winner
 from winners w
 where w.gid = wpd.gid;
 
+
 -- delete from win_prob_data
--- 	where type in (select distinct type from win_prob_data where dwn is null);
+--  where type in (select distinct type from win_prob_data where dwn is null);
