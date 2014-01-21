@@ -49,7 +49,12 @@ else
 fi
 
 echo "Your password is required to check if the database already exists."
-echo "Creating database $2."
+echo "Creating database $2. This will delete any existing database with that name."
+read -p "Continue? (y/n)"
+if [ $REPLY != "y" ]; then
+	echo "Aborting."
+	exit 1
+fi
 echo "WARNING: This requires superuser access. You may need to provide your password several times."
 echo "Trying to drop existing play-by-play data, may produce an error."
 dropdb $2
