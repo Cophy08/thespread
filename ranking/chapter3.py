@@ -57,57 +57,31 @@ team_ratings['win_pct'] = [wins[team] / float(wins[team] +
                                               losses[team])
                            for team in teams]
 team_ratings.sort('colley_ratings', ascending=False)
+
 # DEN falls to 3rd (scores not taken into account)
 # CAR climbs to 2nd, played NFC West, Saints, Patriots
 # No offense / defense
 
-team_points['massey_ratings'] = massey_ratings
-team_points.sort('massey_ratings', ascending=False)
+points_for = dict.fromkeys(teams, 0)
+points_against = dict.fromkeys(teams, 0)
 
-# Massey's Method
-# masseyratings.com
-# Part of the old BCS
-# least squares method:
-# r_i - r_j = y_k
-# where y_k is MoV for game k and r_i and r_j are ratings
-# of teams i and j
-# Equation for every game k which creates m linear equations
-# and n unknowns
-# Xr = y
-# Each row of coefficient matrix X is all 0s except 1 in i
-# and -1 in j meaning i beat j in that game
-# solution is X'Xr = X'y 
-# M = X'X where Mij is the # of games played by team i and 
-# off diagonal element Mij for i != j is negation of # of games
-# played by team i against team j
-# Becomes Mr = p where M is nxn matrix, r is n x 1 vector
-# of unknown ratings and p n x 1 is cumulative point diffs
+for team in teams:
+    home_points = games[games.h == team]['ptsh'].sum()
+    away_points = games[games.v == team]['ptsv'].sum()
+    points_for[team] = home_points + away_points
+    home_conceded = games[games.h == team]['ptsv'].sum()
+    away_conceded = games[games.v == team]['ptsh'].sum()
+    points_against[team] = home_conceded + away_conceded
 
-# Overall rating r_i = o_i + d_i
-# overall pt_diff can be decomposed into f - a
-# coefficient matrix M can be decomposed into T - P
-# where T is diagonal matrix holding total # of games played
-# by each team and P is off diagonal matrix holding
-# number of pairwise matchups
+team_points = pd.DataFrame(index=teams)
+team_points['points_for'] = pd.Series(points_for)
+team_points['points_against'] = pd.Series(points_against)
+team_points['point_diff'] = team_points.points_for - team_points.points_against
 
-t_matrix = np.diag(np.repeat(num_games, len(teams)))
+colley_massey_ratings = np.linalg.solve(game_matrix, 
+                                 team_points.point_diff.values)
 
-p_matrix = np.diag(np.repeat(0, len(teams)))
-for i in range(len(teams)):
-    for j in range(len(teams)):
-        if i == j:
-            continue
-        p_matrix[i][j] = abs(game_matrix[i][j])
-
-rhs = np.dot(t_matrix, massey_ratings) - team_points.points_for.values
-team_points['defense_ratings'] = np.linalg.lstsq((t_matrix + p_matrix), rhs)[0]
-team_points['offense_ratings'] = massey_ratings - defense_ratings
-
-team_points.sort('massey_ratings', ascending=False)['massey_ratings']
-
-team_points.sort('offense_ratings', ascending=False)['offense_ratings']
-
-team_points.sort('defense_ratings', ascending=False)['defense_ratings']
-
+team_ratings['colley_massey_ratings'] = colley_massey_ratings
+team_ratings.sort('colley_massey_ratings', ascending=False)
 
 
