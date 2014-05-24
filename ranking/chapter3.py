@@ -2,24 +2,6 @@
 # Chapter 3
 # Colley's Methods
 
-# based on winning percentage
-# team i rating r_i = w_i / t_i (wins / games played)
-
-# ties in ratings are a problem
-# strength of opponent not factored in
-# undefined at beginning of season
-
-# r_i = (1 + w_i) / (2 + t_i)
-# Will be .5 when the season starts
-# Laplace's rule
-# Strength of Schedule hidden within
-# Because everyone starts at 1/2, points added to ratings are zero-sum
-# Cr = b where r is unknown ratings and b is rhs vector equal to
-# b_i = 1 + 1/2 * (w_i - l_i) and C is Collecy coefficient matrix
-# C_ij = {2 + t_i if i == j
-#        {-n_ij   if i != j 
-# where n_ij is number of times teams i and j played each other
-
 import numpy as np
 import pandas as pd
 
