@@ -4,7 +4,6 @@
 
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
 
 def colley_rankings(games, year, massey=False):
     games = games[games.seas == year]    
@@ -87,6 +86,8 @@ def largest_change(s):
 ranking_df['max_change'] = ranking_df.apply(largest_change, axis=1)
 ranking_df['max_change'].describe()
 
+ranking_df = ranking_df.applymap(lambda x: np.round(x, 2))
+
 ranking_df[ranking_df.max_change == ranking_df.max_change.max()]
 
 ranking_df[ranking_df.max_change == ranking_df.max_change.min()]
@@ -104,8 +105,33 @@ for season in seasons:
 mov_ranking_df['max_change'] = mov_ranking_df.apply(largest_change, axis=1)
 mov_ranking_df['max_change'].describe()
 
+mov_ranking_df = mov_ranking_df.applymap(lambda x: np.round(x, 2))
+
 mov_ranking_df[mov_ranking_df.max_change == mov_ranking_df.max_change.max()]
 
 mov_ranking_df[mov_ranking_df.max_change == mov_ranking_df.max_change.min()]
+
+# Stability
+
+diffs = ranking_df.apply(lambda x: x[:-1] - x[:-1].shift(), axis=1)
+diffs['sd'] = diffs.apply(np.std, axis=1)
+diffs[['sd']].sort('sd', ascending=False)
+
+mov_diffs = mov_ranking_df.apply(lambda x: x[:-1] - x[:-1].shift(), 
+                                 axis=1)
+mov_diffs['sd'] = mov_diffs.apply(np.std, axis=1)
+mov_diffs[['sd']].sort('sd', ascending=False)
+
+means = ranking_df.iloc[:, :-1].apply(np.mean, axis=1)
+means.sort(ascending=False)
+
+mov_means = mov_ranking_df.iloc[:, :-1].apply(np.mean, axis=1)
+mov_means.sort(ascending=False)
+
+diff_df = diffs.join(mov_diffs, lsuffix="_col", rsuffix="_cm")
+
+diff_df[['sd_col', 'sd_cm']].sort('sd_col', ascending=False)
+
+diff_df[['sd_col', 'sd_cm']].sort('sd_cm', ascending=False)
 
 
