@@ -139,6 +139,7 @@ def power_method(point_matrix):
 perron_value, perron_vector = eigens(point_matrix)
 perron_value_skew, perron_vector_skew = eigens(point_matrix, skewed=True)
 perron_vector = perron_vector / np.sum(perron_vector)
+perron_vector_skew = perron_vector_skew / np.sum(perron_vector_skew)
 
 power_ratings = power_method(point_matrix)
 
@@ -149,4 +150,10 @@ perron_skew_order = np.argsort(perron_vector_skew)[::-1]
 print(np.array(teams)[power_rating_order])
 print(np.array(teams)[perron_order])
 print(np.array(teams)[perron_skew_order])
+
+ratings_df = pd.DataFrame({'teams': teams, 'ratings': perron_vector})
+ratings_df = ratings_df[['teams', 'ratings']]
+
+skew_ratings_df = pd.DataFrame({'teams': teams, 'ratings': perron_vector_skew})
+skew_ratings_df = skew_ratings_df[['teams', 'ratings']]
 
