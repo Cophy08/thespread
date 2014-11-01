@@ -8,6 +8,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import scale
 
+# As always, requires the armchairanalysis.com data.
+
 offense = pd.read_csv('OFFENSE.csv')
 players = pd.read_csv('PLAYERS.csv')
 offense = pd.merge(offense, players[['PLAYER', 'PNAME', 'POS1']], on='PLAYER')
@@ -18,6 +20,7 @@ wr_games = wrs.groupby('PNAME')['TRG'].count()
 wrs = wrs.groupby('PNAME').agg(np.mean)
 wrs['games'] = wr_games
 
+# Iterate through [3, 10] to find k, the number of clusters
 k = list(range(3, 11))
 scores = dict.fromkeys(k)
 
